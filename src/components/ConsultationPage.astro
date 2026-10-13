@@ -1,0 +1,456 @@
+---
+import Base from '../layouts/Base.astro';
+import TopBar from './TopBar.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import Placeholder from './Placeholder.astro';
+import CornerFrame from './CornerFrame.astro';
+import SectionHead from './SectionHead.astro';
+import { href, links } from '../config';
+import { consultation, pages, ui, withLang, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const lang: Lang = Astro.props.lang ?? 'en';
+const t = consultation[lang];
+const u = ui[lang];
+const loc = pages[lang];
+const path = (to: string) => withLang(lang, to);
+
+const nav = t.nav.map((item) => ({ ...item, href: withLang(lang, item.href) }));
+const menu = t.menu.map((item) => ({ ...item, href: withLang(lang, item.href) }));
+const footerLinks = [
+  { href: path('/imprint/'), label: u.imprint },
+  { href: path('/privacy/'), label: u.privacy },
+  { href: path('/'), label: u.home },
+];
+---
+
+<Base lang={lang} title={loc.consultation.title} description={loc.consultation.description}>
+  <TopBar lang={lang} action={{ href: path('/#apply'), label: u.applyNow }} />
+  <Header
+    lang={lang}
+    homeHref={path('/')}
+    nav={nav}
+    menu={menu}
+    cta={{ href: '#lead', label: u.bookConsultation }}
+  />
+
+  <main>
+    <section class="bg-violet-dots hero-stage">
+      <div class="container hero split">
+        <div class="hero__par" data-parallax="0.05" style="--basis:480px">
+          <div class="stack intro" style="--gap:24px">
+            <div class="hero__kicker">{t.kicker}</div>
+            <h1 class="h1">{t.title}</h1>
+            <p class="hero__lead">{t.lead}</p>
+            <p class="hero__lead hero__lead--strong">{t.leadStrong}</p>
+            <div class="hero__actions">
+              <a href="#programs" class="btn btn--lg btn--amber" data-magnetic>{t.findPathway}</a>
+              <a href={href(links.brochure)} class="btn btn--lg btn--ghost-light" data-magnetic>{t.download}</a>
+            </div>
+            <div class="hero__motto">{t.motto.learn} <span>{t.motto.earn}</span> {t.motto.move}</div>
+          </div>
+        </div>
+        <div class="hero__par hero__par--visual" data-parallax="0.08">
+          <CornerFrame size={72} thickness={8} color="var(--amber)" class="hero__visual intro">
+            <Placeholder
+              label={t.photo}
+              height={460}
+              style="background:var(--violet-mid);color:var(--on-violet);border-radius:var(--r-panel);font-size:16px"
+            />
+          </CornerFrame>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label={t.promiseAria} class="bg-warm">
+      <div class="container grid promises" style="--min:280px;--gap:40px" data-reveal-stagger="90">
+        {
+          t.promises.map((item, i) => (
+            <div class="stack promise" style="--gap:12px" data-tilt>
+              <div class="promise__num">{String(i + 1).padStart(2, '0')}</div>
+              <h2 class="promise__title">{item.title}</h2>
+              <p class="text-lg">{item.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section aria-labelledby="how-h" class="bg-teal">
+      <div class="container section stack" style="--gap:56px">
+        <SectionHead eyebrow={t.howEyebrow} id="how-h">{t.howTitle}</SectionHead>
+        <ol class="grid steps" style="--min:240px;--gap:20px" data-reveal-stagger="90">
+          {
+            t.steps.map((s, i) => (
+              <li class:list={['step', { 'step--last': i === t.steps.length - 1 }]} data-tilt>
+                <div class="step__num" aria-hidden="true">{i + 1}</div>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </section>
+
+    <section id="programs" aria-labelledby="programs-h" class="bg-mist-2">
+      <div class="container section stack" style="--gap:56px">
+        <SectionHead eyebrow={t.programsEyebrow} id="programs-h">
+          {t.programsTitle}
+          <a slot="aside" href={path('/#programs')} class="see-all">
+            {t.seeAll} <span class="arrow" aria-hidden="true">→</span>
+          </a>
+        </SectionHead>
+        <div class="grid" style="--min:300px;--gap:28px" data-reveal-stagger="90">
+          {
+            t.programs.map((item) => (
+              <div class="program">
+                <div class="program__media">
+                  <Placeholder label={item.photo} height={180} style="border-radius:0" />
+                </div>
+                <div class="program__body">
+                  <div class="program__audience">{item.audience}</div>
+                  <h3 class="program__name">{item.name}</h3>
+                  <p class="text" style="font-size:16px">{item.text}</p>
+                  <a href={path('/#programs')} class="program__link">
+                    {item.link} <span class="arrow" aria-hidden="true">→</span>
+                  </a>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="lead" aria-labelledby="lead-h" class="bg-deep">
+      <div class="container section split" style="align-items:flex-start">
+        <div class="stack" style="--gap:28px;--basis:400px">
+          <SectionHead eyebrow={t.leadEyebrow} id="lead-h" dark lead={t.leadText}>
+            {t.leadTitle}
+          </SectionHead>
+          <ul class="lead__checks" data-reveal>
+            {t.checks.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+
+        <form
+          class="lead-form"
+          method="post"
+          action={links.consultationFormAction || undefined}
+          data-lead-form
+          data-connected={links.consultationFormAction ? 'true' : 'false'}
+          data-offline-message={u.formOffline}
+          data-reveal
+        >
+          <div class="lead-form__head">
+            <h3>{t.formTitle}</h3>
+            <p>{t.formLead}</p>
+          </div>
+          <label>
+            {t.fullName}
+            <input type="text" name="name" autocomplete="name" required />
+          </label>
+          <label>
+            {t.email}
+            <input type="email" name="email" autocomplete="email" required />
+          </label>
+          <label>
+            {t.wechat} <span class="optional">{t.optional}</span>
+            <input type="text" name="wechat" />
+          </label>
+          <label>
+            {t.interested}
+            <select name="interest">
+              {t.interests.map((i) => <option>{i}</option>)}
+            </select>
+          </label>
+          <button type="submit" class="btn btn--lg btn--primary" data-magnetic>{t.submit}</button>
+          <p class="lead-form__status" role="status" aria-live="polite"></p>
+          <p class="lead-form__note">
+            {t.privacyNote} <a href={path('/privacy/')}>{t.privacyLink}</a>.
+          </p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <Footer lang={lang} links={footerLinks} compact />
+</Base>
+
+<style>
+  .hero-stage {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero {
+    position: relative;
+    z-index: 1;
+    padding-block: clamp(64px, 8vw, 104px);
+  }
+  .hero__kicker {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .hero__lead {
+    font-size: clamp(17px, 1.8vw, 19px);
+    line-height: 1.65;
+    max-width: 540px;
+    color: var(--on-violet);
+  }
+  .hero__lead--strong {
+    margin-top: -8px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 8px;
+  }
+  .hero__motto {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 20px;
+    padding-top: 8px;
+  }
+  .hero__motto span {
+    color: var(--amber);
+  }
+  .hero__par--visual {
+    --basis: 420px;
+  }
+
+  .promises {
+    padding-block: clamp(56px, 7vw, 80px);
+  }
+  .promise__num {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--violet);
+  }
+  .promise__title {
+    font-size: 22px;
+  }
+
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .step {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: var(--shadow-1);
+    overflow: visible;
+  }
+  .step h3 {
+    font-size: 19px;
+  }
+  .step p {
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--grey);
+  }
+  .step__num {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    background: var(--violet);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+  .step--last {
+    background: var(--violet);
+    border-color: var(--violet);
+    color: #fff;
+  }
+  .step--last p {
+    color: var(--on-violet);
+  }
+  .step--last .step__num {
+    background: var(--amber);
+    color: var(--ink);
+  }
+
+  .see-all {
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .program {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-1);
+    transition: box-shadow 0.35s var(--ease-out);
+  }
+  .program:hover {
+    box-shadow: var(--shadow-2);
+  }
+  .program__media {
+    overflow: hidden;
+    isolation: isolate;
+    border-radius: var(--r-card) var(--r-card) 0 0;
+  }
+  .program__media :global(.placeholder) {
+    overflow: visible;
+    padding: 20px;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .program__body {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+  }
+  .program__audience {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--violet-mid);
+  }
+  .program__name {
+    font-size: 24px;
+  }
+  .program__link {
+    margin-top: auto;
+    padding-top: 8px;
+    font-weight: 700;
+  }
+
+  .lead__checks {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 16px;
+    color: var(--on-violet);
+  }
+  .lead__checks li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .lead__checks li::before {
+    content: '';
+    flex: 0 0 22px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='%231B1530' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+        center / 14px no-repeat,
+      var(--amber);
+  }
+
+  .lead-form {
+    flex-basis: 420px;
+    background: #fff;
+    color: var(--ink);
+    border-radius: var(--r-panel);
+    padding: clamp(24px, 4vw, 36px);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.6);
+  }
+  .lead-form__head {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-bottom: 4px;
+  }
+  .lead-form__head h3 {
+    font-size: 22px;
+  }
+  .lead-form__head p {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .lead-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    transition: color 0.2s;
+  }
+  .lead-form label:focus-within {
+    color: var(--violet);
+  }
+  .optional {
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .lead-form input,
+  .lead-form select {
+    padding: 12px 14px;
+    border: 1.5px solid #cfc6e2;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 400;
+    background: #fff;
+    color: var(--ink);
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .lead-form input:hover,
+  .lead-form select:hover {
+    border-color: var(--violet-mid);
+  }
+  .lead-form input:focus,
+  .lead-form select:focus {
+    outline: 3px solid var(--amber);
+    outline-offset: 1px;
+    border-color: var(--violet);
+  }
+  .lead-form input:user-invalid {
+    border-color: #c0392b;
+  }
+  .lead-form button {
+    margin-top: 6px;
+    border: 0;
+  }
+  .lead-form__status:empty {
+    display: none;
+  }
+  .lead-form__status {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--violet);
+  }
+  .lead-form__status.is-shaking {
+    animation: shake 0.4s;
+  }
+  .lead-form__note {
+    font-size: 13px;
+    color: var(--grey-2);
+  }
+</style>

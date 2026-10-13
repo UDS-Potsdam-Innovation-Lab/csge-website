@@ -1,0 +1,27 @@
+---
+interface Props {
+  size?: number;
+  thickness?: number;
+  padding?: number;
+  color?: string;
+  radius?: number;
+  class?: string;
+}
+
+const {
+  size = 64,
+  thickness = 8,
+  padding = 18,
+  color = 'var(--violet)',
+  radius = 0,
+  class: className,
+  ...rest
+} = Astro.props;
+const style = `--cf-size:${size}px;--cf-thick:${thickness}px;--cf-pad:${padding}px;--cf-color:${color};--cf-radius:${radius}px`;
+---
+
+<div class:list={['corner-frame', className]} style={style} {...rest}>
+  <span class="corner-frame__tr" aria-hidden="true"></span>
+  <span class="corner-frame__bl" aria-hidden="true"></span>
+  <slot />
+</div>

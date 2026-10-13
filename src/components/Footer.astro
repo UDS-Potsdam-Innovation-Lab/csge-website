@@ -1,0 +1,91 @@
+---
+import Logo from './Logo.astro';
+import { site } from '../config';
+import { ui, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+  links: { href: string; label: string }[];
+  compact?: boolean;
+}
+
+const { lang = 'en', links, compact = false } = Astro.props;
+const copyright = `© ${new Date().getFullYear()} ${site.company} · ${ui[lang].copyrightPlace}`;
+---
+
+<footer class="footer">
+  {
+    compact ? (
+      <div class="container footer__inner footer__inner--compact">
+        <div>{copyright}</div>
+        <div class="footer__links">
+          {links.map((l) => <a href={l.href}>{l.label}</a>)}
+        </div>
+      </div>
+    ) : (
+      <div class="container footer__inner">
+        <div class="footer__top">
+          <div class="footer__brand">
+            <Logo color="#FFFFFF" width={44} height={38} />
+            <span>CSGE</span>
+          </div>
+          <div class="footer__links">
+            {links.map((l) => <a href={l.href}>{l.label}</a>)}
+          </div>
+        </div>
+        <div class="footer__bottom">{copyright}</div>
+      </div>
+    )
+  }
+</footer>
+
+<style>
+  .footer {
+    background: var(--ink);
+    color: #cfc7e2;
+    font-size: 14px;
+  }
+  .footer a {
+    color: #cfc7e2;
+  }
+  .footer a:hover {
+    color: #fff;
+  }
+  .footer__inner {
+    padding-block: 48px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .footer__inner--compact {
+    padding-block: 32px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .footer__top {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 32px;
+  }
+  .footer__brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #fff;
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 22px;
+  }
+  .footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 24px;
+  }
+  .footer__bottom {
+    border-top: 1px solid #3a3152;
+    padding-top: 20px;
+  }
+</style>

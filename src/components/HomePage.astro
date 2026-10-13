@@ -1,0 +1,1331 @@
+---
+import Base from '../layouts/Base.astro';
+import TopBar from './TopBar.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import Placeholder from './Placeholder.astro';
+import CornerFrame from './CornerFrame.astro';
+import HeroPass from './HeroPass.astro';
+import SectionHead from './SectionHead.astro';
+import { href, links } from '../config';
+import { home, pages, ui, withLang, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const lang: Lang = Astro.props.lang ?? 'en';
+const t = home[lang];
+const u = ui[lang];
+const loc = pages[lang];
+const path = (to: string) => withLang(lang, to);
+
+const footerLinks = [
+  ...t.footer,
+  { href: path('/imprint/'), label: u.imprint },
+  { href: path('/privacy/'), label: u.privacy },
+];
+---
+
+<Base
+  lang={lang}
+  title={loc.home.title}
+  description={loc.home.description}
+  jsonLd={{
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    inLanguage: lang === 'zh' ? 'zh-CN' : 'en',
+    mainEntity: t.faq.items
+      .filter((item) => !item.a.startsWith('['))
+      .map((item) => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a },
+      })),
+  }}
+>
+  <TopBar lang={lang} action={{ href: path('/consultation/'), label: u.bookConsultation }} />
+  <Header
+    lang={lang}
+    homeHref="#top"
+    nav={t.nav}
+    menu={t.menu}
+    cta={{ href: '#apply', label: u.apply }}
+    sticky
+  />
+
+  <main>
+    <section id="top" class="bg-violet-dots hero-stage">
+      <div class="container hero split">
+        <div class="hero__par" data-parallax="0.05" style="--basis:480px">
+          <div class="stack hero__copy intro" style="--gap:24px">
+            <div class="eyebrow eyebrow--amber hero__eyebrow">{t.hero.eyebrow}</div>
+            <h1 class="h1">{t.hero.title}</h1>
+            <p class="hero__lead">
+              <b>{t.hero.welcome}</b> {t.hero.lead}
+            </p>
+            <div class="hero__actions">
+              <a href="#apply" class="btn btn--lg btn--amber" data-magnetic>{t.hero.apply}</a>
+              <a href="#programs" class="btn btn--lg btn--ghost-light" data-magnetic>{t.hero.explore}</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero__par hero__par--visual" data-parallax="0.08">
+          <CornerFrame size={84} thickness={10} padding={28} color="var(--amber)" radius={6} class="hero__visual intro">
+            <HeroPass lang={lang} />
+          </CornerFrame>
+        </div>
+      </div>
+    </section>
+
+    <section aria-label={lang === 'zh' ? '亮点' : 'Highlights'} class="bg-warm">
+      <div class="container highlights grid" style="--min:250px;--gap:32px" data-reveal-stagger="55">
+        {
+          t.highlights.map((h) => (
+            <div class="stack highlight" style="--gap:16px">
+              <div class="highlight__media">
+                {'badge' in h && h.badge ? (
+                  <div class="highlights__badge">{h.badge}</div>
+                ) : (
+                  <Placeholder label={h.placeholder!} />
+                )}
+              </div>
+              <h3 class="card-title">{h.title}</h3>
+              <p class="text">{h.text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section id="about" aria-labelledby="about-h" class="bg-mist-2">
+      <div class="container section split">
+        <div class="about__visual" data-reveal>
+          <CornerFrame>
+            <Placeholder label={t.about.photo} height={420} style="border-radius:var(--r-panel)" />
+          </CornerFrame>
+        </div>
+        <div class="stack about__copy" style="--gap:24px;--basis:480px">
+          <SectionHead eyebrow={t.about.eyebrow} id="about-h">{t.about.title}</SectionHead>
+          <div class="stack" style="--gap:16px" data-reveal>
+            <p class="text-lg">{t.about.p1}</p>
+            <p class="text-lg">{t.about.p2}</p>
+            <div class="chips about__chips">
+              {t.about.chips.map((c) => <span class="chip about__chip">{c}</span>)}
+              <span class="chip about__chip about__chip--solid">{t.about.valuesChip}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="potsdam" aria-labelledby="potsdam-h" class="bg-teal">
+      <div class="container section stack" style="--gap:56px">
+        <SectionHead eyebrow={t.potsdam.eyebrow} id="potsdam-h">{t.potsdam.title}</SectionHead>
+        <div class="grid" style="--min:300px;--gap:32px" data-reveal-stagger="100">
+          {
+            t.potsdam.items.map((item) => (
+              <div class="stack experience" style="--gap:16px">
+                <div class="experience__media">
+                  <Placeholder label={item.placeholder} />
+                </div>
+                <h3 class="card-title">{item.title}</h3>
+                <p class="text">{item.text}</p>
+              </div>
+            ))
+          }
+        </div>
+        <div class="event" data-reveal>
+          <div class="stack" style="--gap:6px">
+            <div class="kicker"><span class="live-dot" aria-hidden="true"></span>{t.potsdam.nextEvent}</div>
+            <div class="event__name">{t.potsdam.eventName}</div>
+          </div>
+          <a href="#contact" class="btn btn--lg btn--primary" data-magnetic>{t.potsdam.register}</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="future" aria-labelledby="future-h" class="bg-mist-dots">
+      <div class="container section stack" style="--gap:56px">
+        <SectionHead eyebrow={t.future.eyebrow} id="future-h" width={900} lead={t.future.lead}>
+          {t.future.titleBefore}<br /><span style="color:var(--violet)">{t.future.titleAccent}</span>
+        </SectionHead>
+        <div class="values" data-reveal-stagger="100">
+          {
+            t.future.values.map((v) => (
+              <div class="values__item">
+                <div class="values__title">{v.title}</div>
+                <p class="text" style="font-size:16px">{v.text}</p>
+              </div>
+            ))
+          }
+        </div>
+        <div class="grid" style="--min:300px" data-reveal-stagger="100">
+          <div class="feature" data-tilt>
+            <div class="feature__bar" style="background:var(--teal)" aria-hidden="true"></div>
+            <h3 class="feature__title">{t.future.aiTitle}</h3>
+            <p class="text" style="font-size:16px">{t.future.aiLead}</p>
+            <ul class="list">
+              {t.future.aiItems.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+          <div class="feature" data-tilt>
+            <div class="feature__bar" style="background:var(--violet)" aria-hidden="true"></div>
+            <h3 class="feature__title">{t.future.personalTitle}</h3>
+            <p class="text" style="font-size:16px">{t.future.personalLead}</p>
+            <ul class="list">
+              {t.future.personalItems.map((item) => <li>{item}</li>)}
+              <li>
+                {t.future.weeklySupport} <a href="#support" style="font-weight:700">{t.future.meetTeam}</a>
+              </li>
+            </ul>
+          </div>
+          <div class="feature feature--violet" data-tilt>
+            <div class="feature__bar" style="background:var(--amber)" aria-hidden="true"></div>
+            <h3 class="feature__title">{t.future.europeTitle}</h3>
+            <p class="text" style="font-size:16px;color:var(--on-violet-2)">{t.future.europeLead}</p>
+            <ul class="list" style="color:#fff">
+              {t.future.europeItems.map((item) => <li>{item}</li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="programs" aria-labelledby="programs-h" class="bg-paper">
+      <div class="container section stack" style="--gap:56px">
+        <SectionHead eyebrow={t.programs.eyebrow} id="programs-h" width={640}>
+          {t.programs.title}
+          <Fragment slot="aside">{t.programs.aside}</Fragment>
+        </SectionHead>
+
+        <div class="stack" style="--gap:32px">
+          <div class="panel" data-track-scope data-reveal>
+            <div class="row-between">
+              <div class="stack" style="--gap:10px;max-width:680px">
+                <div class="kicker">{t.programs.microKicker}</div>
+                <h3 class="program-title program-title--xl">Ed4Change</h3>
+                <p class="text" style="font-size:16px">{t.programs.ed4changeLead}</p>
+              </div>
+              <a href="#apply" class="btn btn--primary" data-magnetic>{t.programs.applyEd4}</a>
+            </div>
+
+            <div class="finder" data-track-finder>
+              <span class="finder__label" id="finder-label">{t.programs.finderLabel}</span>
+              <div class="finder__options" role="group" aria-labelledby="finder-label">
+                {
+                  t.programs.trackFinder.map((o) => (
+                    <button type="button" class="finder__option" data-track={o.track} aria-pressed="false">
+                      {o.label}
+                    </button>
+                  ))
+                }
+              </div>
+            </div>
+
+            <div class="grid tracks" style="--min:230px;--gap:16px">
+              {
+                t.programs.ed4change.map((track) => (
+                  <div class="card track" data-tilt data-track-card={track.name}>
+                    <div class="track__name">{track.name}</div>
+                    <div class="kicker track__audience">{track.audience}</div>
+                    <p class="text">{track.text}</p>
+                    <div class="track__foot">
+                      <span class="track__price">{track.price}</span>
+                      {track.priceNote && <span class="track__note">{track.priceNote}</span>}
+                    </div>
+                  </div>
+                ))
+              }
+              <div class="card track track--soon" data-tilt data-track-card="i4research">
+                <div class="track__head">
+                  <div class="track__name">i4research</div>
+                  <span class="badge-soon">{t.programs.comingSoon}</span>
+                </div>
+                <div class="kicker track__audience">{t.programs.i4researchAudience}</div>
+                <p class="text">{t.programs.i4researchText}</p>
+                <a href={path('/consultation/')} class="track__foot track__link">
+                  {t.programs.registerInterest} <span class="arrow" aria-hidden="true">→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid" style="--min:340px;--gap:32px" data-reveal-stagger="100">
+            <div class="panel degree" data-tilt>
+              <div class="kicker">{t.programs.mscKicker}</div>
+              <div class="stack" style="--gap:6px">
+                <h3 class="program-title">Young M.Sc.</h3>
+                <div class="degree__price">€<span data-count="7500">7,500</span> <span class="degree__per">{t.programs.mscPricePer}</span></div>
+              </div>
+              <p class="text" style="font-size:16px">{t.programs.mscLead}</p>
+              <ul class="degree__list">
+                {t.programs.mscItems.map((item) => <li>{item}</li>)}
+              </ul>
+              <a href="#apply" class="btn btn--primary degree__cta" data-magnetic>{t.programs.applyMsc}</a>
+            </div>
+            <div class="panel degree" data-tilt>
+              <div class="kicker">{t.programs.mbaKicker}</div>
+              <div class="stack" style="--gap:6px">
+                <h3 class="program-title">Builder MBA</h3>
+                <div class="degree__price">{t.programs.comingSoon}</div>
+              </div>
+              <p class="text" style="font-size:16px">{t.programs.mbaLead}</p>
+              <ul class="degree__list">
+                {t.programs.mbaItems.map((item) => <li>{item}</li>)}
+              </ul>
+              <a href={path('/consultation/')} class="btn btn--ghost degree__cta" data-magnetic>{t.programs.registerInterest}</a>
+            </div>
+          </div>
+
+          <div class="panel visa" data-reveal>
+            <div class="stack" style="--gap:10px;max-width:760px">
+              <div class="kicker">{t.programs.visaKicker}</div>
+              <h3 class="program-title">{t.programs.visaTitle}</h3>
+            </div>
+            <div class="grid" style="--min:300px">
+              <div class="visa__card" data-tilt>
+                <div class="kicker">{t.programs.during}</div>
+                <h4 class="visa__title">{t.programs.shortVisa}</h4>
+                <p class="text">{t.programs.shortVisaText}</p>
+              </div>
+              <div class="visa__card" data-tilt>
+                <div class="kicker">{t.programs.after}</div>
+                <h4 class="visa__title">{t.programs.longVisa}</h4>
+                <p class="text">{t.programs.longVisaText}</p>
+              </div>
+            </div>
+            <p class="fine-print">{t.programs.visaFine}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="board" aria-labelledby="board-h" class="bg-mist">
+      <div class="container section stack" style="--gap:56px">
+        <SectionHead eyebrow={t.board.eyebrow} id="board-h" lead={t.board.lead}>
+          {t.board.title}
+        </SectionHead>
+
+        <div class="chair" data-reveal>
+          <div class="chair__portrait">
+            <CornerFrame size={44} thickness={6} padding={12}>
+              <img src="/images/meinel.jpg" alt={t.board.chairAlt} width="196" height="196" loading="lazy" decoding="async" />
+            </CornerFrame>
+            <div class="kicker" style="font-size:14px">{t.board.chair}</div>
+          </div>
+          <div class="stack chair__body" style="--gap:24px">
+            <div class="stack" style="--gap:6px">
+              <div class="kicker" style="font-size:15px">{t.board.prof}</div>
+              <h3 class="chair__name">Christoph Meinel</h3>
+              <div class="chair__role">{t.board.chairRole}</div>
+            </div>
+            <p class="text" style="font-size:16px;line-height:1.7;max-width:720px">{t.board.chairBio}</p>
+            <dl class="stats">
+              {
+                t.board.stats.map((s) => (
+                  <div class="stat">
+                    <dt class="stat__label">{s.label}</dt>
+                    <dd class="stat__num"><span data-count={s.count}>{s.count}</span>{s.suffix}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+            <div class="grid" style="--min:200px;--gap:24px">
+              {
+                t.board.merits.map((m, i) => (
+                  <div class="merit" style={`--merit:${['var(--violet)', 'var(--teal)', 'var(--amber)'][i]}`}>
+                    <h4>{m.title}</h4>
+                    <ul>
+                      {m.items.map((item) => <li>{item}</li>)}
+                    </ul>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="grid" style="--min:220px;--gap:48px 24px;align-items:start" data-reveal-stagger="90">
+          {
+            t.board.members.map((person) => (
+              <div class="member">
+                <div class="member__photo">
+                  <img src={person.image} alt={t.board.portraitOf(person.name)} width="160" height="160" loading="lazy" decoding="async" />
+                </div>
+                <div class="kicker member__title">{t.board.prof}</div>
+                <h3 class="member__name">{person.name}</h3>
+                <div class="member__role">{person.role}</div>
+                <div class="member__rule" aria-hidden="true"></div>
+                <p class="member__bio">
+                  {person.bio[0]}
+                  <br />
+                  {person.bio[1]}
+                </p>
+              </div>
+            ))
+          }
+        </div>
+
+        <div id="support" class="support" data-reveal>
+          <div class="stack" style="--gap:8px;max-width:640px">
+            <div class="kicker">{t.board.supportKicker}</div>
+            <h3 class="support__title">{t.board.supportTitle}</h3>
+          </div>
+          <div class="grid" style="--min:240px;--gap:16px">
+            {
+              t.board.learningSupport.map((s) => (
+                <div class="card" data-tilt>
+                  <div class="support__logo">[{s.logo}]</div>
+                  <div class="kicker" style="font-size:12px">{t.board.supportLabel}</div>
+                  <div class="support__name">{s.name}</div>
+                  <p class="text" style="font-size:14px">{s.text}</p>
+                </div>
+              ))
+            }
+          </div>
+          <div class="stack" style="--gap:16px">
+            <h4 class="support__sub">{t.board.advisorsTitle}</h4>
+            <div class="grid" style="--min:260px;--gap:16px">
+              {
+                t.board.advisors.map((a) => (
+                  <div class="card advisor" data-tilt>
+                    <div class="advisor__photo">{t.board.photo}</div>
+                    <div class="stack" style="--gap:4px;min-width:0">
+                      <div class="advisor__name">{a.name}</div>
+                      <div class="advisor__role">{a.role}</div>
+                      <div class="advisor__focus">{a.focus}</div>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="partners" aria-labelledby="partners-h" class="bg-sand">
+      <div class="container section stack" style="--gap:48px">
+        <SectionHead eyebrow={t.partners.eyebrow} id="partners-h">{t.partners.title}</SectionHead>
+        <div class="grid" style="--min:220px;--gap:16px" data-reveal-stagger="80">
+          {t.partners.items.map((item) => <div class="partner" data-tilt>{item}</div>)}
+        </div>
+        <div class="partners__cta" data-reveal>
+          <p class="text-lg">{t.partners.cta}</p>
+          <a href="#contact" class="btn btn--ghost" data-magnetic>{t.partners.become}</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="apply" aria-labelledby="apply-h" class="bg-violet-dots">
+      <div class="container section stack" style="--gap:56px">
+        <SectionHead eyebrow={t.apply.eyebrow} id="apply-h" dark width={680}>
+          {t.apply.title}
+          <Fragment slot="aside">{t.apply.aside}</Fragment>
+        </SectionHead>
+        <ol class="grid steps" style="--min:230px;--gap:20px" data-reveal-stagger="100">
+          {
+            t.apply.steps.map((s, i) => (
+              <li class:list={['step', { 'step--last': i === t.apply.steps.length - 1 }]} data-tilt>
+                <div class="step__num" aria-hidden="true">{i + 1}</div>
+                <h3 class="card-title">{s.title}</h3>
+                <p class="text">{s.text}</p>
+              </li>
+            ))
+          }
+        </ol>
+        <div class="apply__cta" data-reveal>
+          <a href={href(links.apply)} class="apply__btn" data-magnetic>{t.hero.apply}</a>
+          <a href={path('/consultation/')} class="apply__alt">
+            {t.apply.unsure} <span class="arrow" aria-hidden="true">→</span>
+          </a>
+          <p class="apply__note">{t.apply.note}</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" aria-labelledby="faq-h" class="bg-warm">
+      <div class="container section stack" style="--gap:48px;max-width:900px">
+        <SectionHead eyebrow={t.faq.eyebrow} id="faq-h">{t.faq.title}</SectionHead>
+        <div class="stack" style="--gap:12px" data-reveal-stagger="50">
+          {
+            t.faq.items.map((f) => (
+              <details class="faq" data-accordion>
+                <summary>
+                  {f.q}
+                  <span class="faq__plus" aria-hidden="true" />
+                </summary>
+                <div class="faq__body" data-accordion-body>
+                  <p>{f.a}</p>
+                </div>
+              </details>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" aria-labelledby="contact-h" class="bg-deep">
+      <div class="container section split" style="align-items:flex-start">
+        <div class="stack" style="--gap:32px">
+          <SectionHead eyebrow={t.contact.eyebrow} id="contact-h" dark>{t.contact.title}</SectionHead>
+          <address class="contact__details" data-reveal>
+            <div><span>{t.contact.address}</span>{t.contact.addressValue}</div>
+            <div><span>{t.contact.email}</span>[info@your-domain]</div>
+            <div><span>{t.contact.phone}</span>[+49 …]</div>
+            <div><span>{t.contact.wechat}</span>{t.contact.wechatId}</div>
+          </address>
+        </div>
+        <div class="stack contact__aside" style="--gap:24px" data-reveal>
+          <div class="contact__wechat">
+            <div class="contact__qr">{t.contact.qr}</div>
+            <p>{t.contact.scan}</p>
+          </div>
+          <a href={path('/consultation/')} class="btn btn--lg btn--amber" data-magnetic>{t.contact.book}</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer lang={lang} links={footerLinks} />
+</Base>
+
+<style>
+  .hero-stage {
+    position: relative;
+    overflow: hidden;
+  }
+  #apply {
+    position: relative;
+  }
+  .hero {
+    position: relative;
+    z-index: 1;
+    padding-block: clamp(72px, 8vw, 104px);
+  }
+  .hero.split {
+    align-items: center;
+    gap: clamp(40px, 5vw, 72px);
+  }
+  .hero__eyebrow {
+    font-size: 18px;
+  }
+  .hero__lead {
+    font-size: clamp(17px, 1.8vw, 19px);
+    line-height: 1.65;
+    max-width: 540px;
+    color: var(--on-violet);
+  }
+  .hero__lead b {
+    color: #fff;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 8px;
+  }
+  .hero__par--visual {
+    --basis: 540px;
+    max-width: 580px;
+    margin-inline: auto;
+  }
+
+  .highlights {
+    padding-block: clamp(72px, 8vw, 104px);
+    overflow: visible;
+  }
+  .highlight {
+    overflow: visible;
+    min-width: 0;
+  }
+  .highlight__media {
+    border-radius: 16px;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(135deg, var(--lilac) 0%, #ebe5f6 100%);
+    transition: transform 0.35s var(--ease-out);
+  }
+  .highlight:hover .highlight__media {
+    transform: translateY(-4px);
+  }
+  .highlight__media :global(.placeholder) {
+    border-radius: 0;
+    overflow: visible;
+    padding: 24px;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .highlights__badge {
+    height: var(--h, 260px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--violet);
+    color: #fff;
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: clamp(36px, 4.8vw, 52px);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    padding: 24px;
+    text-align: center;
+  }
+  .card-title {
+    font-size: 20px;
+    line-height: 1.35;
+    overflow: visible;
+    padding-inline: 1px;
+  }
+  .highlight .text {
+    overflow: visible;
+    line-height: 1.65;
+  }
+
+  .about__visual,
+  .about__copy {
+    overflow: visible;
+    min-width: 0;
+  }
+  .about__visual :global(.placeholder) {
+    overflow: visible;
+    padding: 28px;
+    font-size: 16px;
+    line-height: 1.45;
+  }
+  .about__chips {
+    gap: 10px;
+    padding-top: 8px;
+    overflow: visible;
+  }
+  .about__chip {
+    background: #fff;
+    border: 1.5px solid #b9aed3;
+    padding: 8px 16px;
+    font-size: 14px;
+    line-height: 1.3;
+    overflow: visible;
+  }
+  .about__chip--solid {
+    background: var(--violet);
+    border-color: var(--violet);
+    color: #fff;
+  }
+
+  .experience__media {
+    border-radius: 16px;
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform 0.35s var(--ease-out);
+  }
+  .experience:hover .experience__media {
+    transform: translateY(-4px);
+  }
+  .experience__media :global(.placeholder) {
+    border-radius: 0;
+    overflow: visible;
+    padding: 24px;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .event {
+    background: var(--mist-2);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    padding: 28px 32px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+  .event__name {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(18px, 2.4vw, 22px);
+  }
+
+  .values {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    border-block: 1px solid var(--lilac);
+  }
+  .values__item {
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .values__item + .values__item {
+    border-left: 1px solid var(--lilac);
+  }
+  .values__item:first-child {
+    padding-left: 0;
+  }
+  @media (max-width: 760px) {
+    .values__item {
+      padding-inline: 0;
+    }
+    .values__item + .values__item {
+      border-left: 0;
+      border-top: 1px solid var(--lilac);
+    }
+  }
+  .values__title {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 24px;
+    color: var(--violet);
+  }
+  .feature {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-panel);
+    padding: clamp(28px, 3.5vw, 36px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: var(--shadow-1);
+    overflow: visible;
+  }
+  .feature--violet {
+    background: var(--violet);
+    border-color: var(--violet);
+    color: #fff;
+  }
+  .feature__bar {
+    width: 44px;
+    height: 6px;
+    border-radius: var(--r-pill);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.7s 0.2s var(--ease-out);
+  }
+  :global([data-reveal].is-visible) .feature__bar {
+    transform: scaleX(1);
+  }
+  .feature__title {
+    font-size: 24px;
+  }
+
+  .program-title {
+    font-weight: 800;
+    font-size: clamp(24px, 3.4vw, 30px);
+    line-height: 1.2;
+    color: var(--violet);
+  }
+  .program-title--xl {
+    font-size: clamp(28px, 4vw, 34px);
+  }
+  .finder {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+    padding: 16px 20px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+  }
+  .finder__label {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .finder__options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .finder__option {
+    border: 1.5px solid var(--line);
+    background: var(--mist-2);
+    color: var(--ink);
+    border-radius: var(--r-pill);
+    padding: 7px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      border-color 0.2s,
+      transform 0.25s var(--ease-out),
+      box-shadow 0.25s;
+  }
+  .finder__option:hover {
+    border-color: var(--violet);
+    transform: translateY(-1px);
+  }
+  .finder__option[aria-pressed='true'] {
+    background: var(--violet);
+    border-color: var(--violet);
+    color: #fff;
+    transform: none;
+    box-shadow: 0 8px 16px -10px rgba(46, 29, 87, 0.55);
+  }
+  .tracks.has-selection .track:not(.is-selected) {
+    opacity: 0.42;
+    filter: grayscale(0.25);
+  }
+  .track.is-selected {
+    border-color: var(--violet);
+    box-shadow:
+      0 0 0 2px var(--violet),
+      var(--shadow-2);
+  }
+  .track {
+    padding: 24px;
+  }
+  .track__name {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 22px;
+  }
+  .track__audience {
+    line-height: 1.4;
+    min-height: 36px;
+  }
+  .track__foot {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--line-soft);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .track__link {
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .track__price {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 22px;
+    color: var(--violet);
+  }
+  .track__note {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .track--soon {
+    border: 2px dashed #cfc3ea;
+    background: #fbfafd;
+    box-shadow: none;
+  }
+  .track__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .badge-soon {
+    background: var(--violet);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: var(--r-pill);
+  }
+  .degree {
+    gap: 18px;
+  }
+  .degree__price {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--ink);
+  }
+  .degree__per {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .degree__list {
+    padding-left: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 16px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .degree__cta {
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  .visa {
+    border-top: 6px solid var(--violet);
+  }
+  .visa__card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .visa__title {
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .fine-print {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .chair {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-panel);
+    padding: clamp(28px, 4vw, 48px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(32px, 4vw, 56px);
+    align-items: flex-start;
+    box-shadow: var(--shadow-1);
+  }
+  .chair__portrait {
+    flex: 0 0 220px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+  }
+  .chair__portrait img {
+    display: block;
+    width: 196px;
+    height: 196px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .chair__body {
+    flex: 1 1 520px;
+    min-width: 0;
+  }
+  .chair__name {
+    font-weight: 800;
+    font-size: clamp(26px, 3.4vw, 32px);
+    line-height: 1.15;
+  }
+  .chair__role {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--violet);
+  }
+  .stats {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    overflow: hidden;
+  }
+  .stat {
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 4px;
+    background: var(--mist-2);
+    box-shadow: inset -1px 0 0 var(--line);
+  }
+  .stat__num {
+    margin: 0;
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 28px;
+    line-height: 1.1;
+    color: var(--violet);
+    font-variant-numeric: tabular-nums;
+  }
+  .stat__label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .merit {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 16px;
+    border-top: 3px solid var(--merit);
+  }
+  .merit h4 {
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .merit ul {
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--grey);
+  }
+  .member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .member__photo {
+    border-radius: 50%;
+    padding: 4px;
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--line);
+    transition: box-shadow 0.3s;
+  }
+  .member:hover .member__photo {
+    box-shadow: 0 0 0 3px var(--violet);
+  }
+  .member img {
+    display: block;
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .member__title {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  .member__name {
+    margin-top: 2px;
+    font-weight: 700;
+    font-size: 19px;
+    line-height: 1.3;
+  }
+  .member__role {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.45;
+    color: var(--violet);
+    min-height: 41px;
+  }
+  .member__rule {
+    width: 32px;
+    height: 3px;
+    background: var(--amber);
+    margin: 14px 0;
+  }
+  .member__bio {
+    font-size: 14px;
+    line-height: 1.65;
+    color: var(--grey-2);
+    max-width: 240px;
+  }
+  .support {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-panel);
+    padding: clamp(28px, 4vw, 44px);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    box-shadow: var(--shadow-1);
+  }
+  .support__title {
+    font-weight: 800;
+    font-size: clamp(24px, 3vw, 28px);
+  }
+  .support__logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: var(--mist-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 11px;
+    color: var(--violet);
+  }
+  .support__name {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 19px;
+    line-height: 1.25;
+  }
+  .support__sub {
+    font-weight: 700;
+    font-size: 18px;
+  }
+  .advisor {
+    padding: 20px;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+  .advisor__photo {
+    flex: 0 0 60px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--lilac);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--violet);
+  }
+  .advisor__name {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 17px;
+  }
+  .advisor__role {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--violet);
+  }
+  .advisor__focus {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--grey-2);
+  }
+
+  .partner {
+    height: 140px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 16px;
+    font-weight: 700;
+    color: var(--grey);
+  }
+  .partners__cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 32px;
+  }
+
+  .steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .step {
+    background: #fff;
+    color: var(--ink);
+    border-radius: var(--r-card);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: visible;
+  }
+  .step__num {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    background: var(--violet);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+  .step--last {
+    background: var(--amber);
+  }
+  .step--last .step__num {
+    background: var(--ink);
+  }
+  .step--last .text {
+    color: #2e2640;
+  }
+  .apply__cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+  }
+  .apply__btn {
+    display: inline-block;
+    background: var(--amber);
+    color: var(--ink);
+    padding: clamp(18px, 2.6vw, 22px) clamp(48px, 7vw, 68px);
+    border-radius: var(--r-pill);
+    text-decoration: none;
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: clamp(20px, 2.6vw, 24px);
+    letter-spacing: 0.3px;
+    box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.45);
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
+    transition:
+      background-color 0.2s,
+      transform 0.25s var(--ease-out),
+      box-shadow 0.25s;
+  }
+  .apply__btn:hover {
+    background: #f7c362;
+    color: var(--ink);
+    box-shadow: 0 18px 36px -14px rgba(0, 0, 0, 0.5);
+  }
+  .apply__alt {
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .apply__alt:hover {
+    color: var(--amber);
+  }
+  .apply__note {
+    font-size: 14px;
+    color: #cfc3ea;
+  }
+
+  .faq {
+    background: var(--mist-2);
+    border: 1px solid transparent;
+    border-radius: var(--r-card);
+    padding: 0 24px;
+    transition:
+      background-color 0.25s,
+      border-color 0.25s,
+      box-shadow 0.25s;
+  }
+  .faq:hover {
+    border-color: var(--line);
+  }
+  .faq[open]:not(.is-closing) {
+    background: #fff;
+    border-color: var(--line);
+    box-shadow: var(--shadow-1);
+  }
+  .faq summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 0;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 17px;
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq__plus {
+    position: relative;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid var(--line);
+    transition:
+      transform 0.3s var(--ease-out),
+      background-color 0.25s,
+      border-color 0.25s;
+  }
+  .faq__plus::before,
+  .faq__plus::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 2px;
+    margin: -1px 0 0 -6px;
+    border-radius: 2px;
+    background: var(--violet);
+    transition: background-color 0.25s;
+  }
+  .faq__plus::after {
+    transform: rotate(90deg);
+  }
+  .faq[open]:not(.is-closing) .faq__plus {
+    transform: rotate(45deg);
+    background: var(--violet);
+    border-color: var(--violet);
+  }
+  .faq[open]:not(.is-closing) .faq__plus::before,
+  .faq[open]:not(.is-closing) .faq__plus::after {
+    background: #fff;
+  }
+  .faq__body {
+    overflow: hidden;
+  }
+  .faq__body p {
+    padding: 0 48px 22px 0;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--grey);
+  }
+
+  .contact__details {
+    font-style: normal;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--on-violet);
+  }
+  .contact__details > div {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  }
+  .contact__details span {
+    font-weight: 700;
+    color: #fff;
+  }
+  .contact__wechat {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+  .contact__wechat p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--lilac);
+    max-width: 240px;
+  }
+  .contact__qr {
+    flex: 0 0 112px;
+    width: 112px;
+    height: 112px;
+    background: #fff;
+    color: var(--violet);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 13px;
+    padding: 8px;
+    border-radius: 12px;
+  }
+  .contact__aside {
+    --basis: 360px;
+    padding-top: 8px;
+  }
+</style>

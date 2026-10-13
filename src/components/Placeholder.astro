@@ -1,0 +1,13 @@
+---
+interface Props {
+  label: string;
+  height?: number;
+  class?: string;
+  style?: string;
+}
+
+const { label, height, class: className, style = '' } = Astro.props;
+const heightStyle = height ? `--h:${height}px;` : '';
+---
+
+<div class:list={['placeholder', className]} style={heightStyle + style}>[{label}]</div>

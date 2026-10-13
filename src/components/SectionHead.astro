@@ -1,0 +1,27 @@
+---
+interface Props {
+  eyebrow: string;
+  id: string;
+  lead?: string;
+  dark?: boolean;
+  width?: number;
+}
+
+const { eyebrow, id, lead, dark = false, width } = Astro.props;
+const hasAside = Astro.slots.has('aside');
+---
+
+<div class:list={['section-head', { 'section-head--dark': dark }]} data-reveal style={width ? `--head-w:${width}px` : undefined}>
+  <div class="section-head__main">
+    <div class:list={['eyebrow', { 'eyebrow--amber': dark }]}>{eyebrow}</div>
+    <h2 id={id} class="h2"><slot /></h2>
+    {lead && <p class="section-head__lead">{lead}</p>}
+  </div>
+  {
+    hasAside && (
+      <div class="section-head__aside">
+        <slot name="aside" />
+      </div>
+    )
+  }
+</div>

@@ -1,0 +1,139 @@
+---
+import { home, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const lang: Lang = Astro.props.lang ?? 'en';
+const t = home[lang].pass;
+const pathD = 'M 56 108 C 150 108, 108 214, 248 214 S 348 300, 418 274';
+---
+
+<div class="pass" role="img" aria-label={t.aria}>
+  <p class="pass__badge">{t.badge}</p>
+
+  <svg class="pass__svg" viewBox="0 0 480 360" aria-hidden="true">
+    <defs>
+      <filter id="pass-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="4" result="blur"></feGaussianBlur>
+        <feMerge>
+          <feMergeNode in="blur"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+      </filter>
+    </defs>
+    <path d={pathD} fill="none" stroke="#DCD3EE" stroke-width="10" stroke-linecap="round"></path>
+    <path class="pass__dash" d={pathD} fill="none" stroke="#4E3188" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"></path>
+
+    <circle cx="56" cy="108" r="13" fill="#4E3188"></circle>
+    <circle cx="56" cy="108" r="5" fill="#FFFFFF"></circle>
+    <text x="80" y="52" font-family="DM Sans, PingFang SC, Microsoft YaHei, sans-serif" font-size="13" fill="#6B6382">{t.fromDesk}</text>
+    <text x="80" y="82" font-family="Poppins, PingFang SC, Microsoft YaHei, sans-serif" font-weight="800" font-size="30" fill="#1B1530">{t.china}</text>
+
+    <circle cx="118" cy="138" r="8" fill="#3FC1C9"></circle>
+    <text x="104" y="172" text-anchor="end" font-family="Poppins, PingFang SC, Microsoft YaHei, sans-serif" font-weight="700" font-size="14" fill="#1B1530">{t.openCourse}</text>
+
+    <circle cx="248" cy="214" r="8" fill="#4E3188"></circle>
+    <text x="266" y="198" font-family="Poppins, PingFang SC, Microsoft YaHei, sans-serif" font-weight="700" font-size="14" fill="#1B1530">{t.ects}</text>
+
+    <circle cx="359" cy="254" r="8" fill="#3FC1C9"></circle>
+    <text x="344" y="286" text-anchor="end" font-family="Poppins, PingFang SC, Microsoft YaHei, sans-serif" font-weight="700" font-size="14" fill="#1B1530">{t.visit}</text>
+
+    <circle class="pass__pulse" cx="418" cy="274" r="22" fill="#F4B23E" opacity="0.25"></circle>
+    <circle cx="418" cy="274" r="13" fill="#F4B23E"></circle>
+    <path d="M412 280 L424 268 M415 268 H424 V277" fill="none" stroke="#1B1530" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+    <text x="462" y="318" text-anchor="end" font-family="DM Sans, PingFang SC, Microsoft YaHei, sans-serif" font-size="13" fill="#6B6382">{t.toCampus}</text>
+    <text x="462" y="348" text-anchor="end" font-family="Poppins, PingFang SC, Microsoft YaHei, sans-serif" font-weight="800" font-size="30" fill="#4E3188">{t.europe}</text>
+
+    <circle class="pass__traveler" r="5" fill="#F4B23E" filter="url(#pass-glow)">
+      <animateMotion dur="5.5s" rotate="auto" repeatCount="indefinite" path={pathD}></animateMotion>
+    </circle>
+  </svg>
+
+  <div class="chips pass__chips">
+    <span class="chip" style="background:var(--violet);color:#fff">{t.chips[0]}</span>
+    <span class="chip" style="background:#E3F6F7;color:#1B6A70">{t.chips[1]}</span>
+    <span class="chip" style="background:#FDF0D5;color:#7A5200">{t.chips[2]}</span>
+  </div>
+</div>
+
+<style>
+  .pass {
+    position: relative;
+    background: #fff;
+    color: var(--ink);
+    border-radius: 24px;
+    padding: 40px 36px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .pass__badge {
+    position: absolute;
+    top: -12px;
+    right: 24px;
+    z-index: 2;
+    margin: 0;
+    rotate: 5deg;
+    background: var(--amber);
+    color: var(--ink);
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 8px 16px;
+    border-radius: var(--r-pill);
+    box-shadow: 0 6px 16px rgba(27, 21, 48, 0.18);
+  }
+  .pass__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .pass__chips {
+    border-top: 1px dashed var(--lilac);
+    padding-top: 18px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pass__dash {
+      stroke-dasharray: 6 14;
+      animation: pass-flow 1.6s linear infinite;
+    }
+    .pass__pulse {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: pass-pulse 2.4s ease-in-out infinite;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pass__traveler {
+      display: none;
+    }
+  }
+
+  @keyframes pass-flow {
+    to {
+      stroke-dashoffset: -40;
+    }
+  }
+  @keyframes pass-pulse {
+    50% {
+      opacity: 0.55;
+      transform: scale(1.28);
+    }
+  }
+
+  @media (max-width: 520px) {
+    .pass {
+      padding: 36px 20px 20px;
+      gap: 16px;
+    }
+    .pass__badge {
+      position: static;
+      rotate: 0deg;
+      align-self: flex-start;
+    }
+  }
+</style>

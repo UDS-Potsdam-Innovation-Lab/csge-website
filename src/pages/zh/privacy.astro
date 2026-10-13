@@ -1,0 +1,8 @@
+---
+import Legal from '../../layouts/Legal.astro';
+import { legal, pages } from '../../i18n';
+---
+
+<Legal lang="zh" title={pages.zh.privacy.title} description={pages.zh.privacy.description}>
+  <p>{legal.zh.privacyBody}</p>
+</Legal>

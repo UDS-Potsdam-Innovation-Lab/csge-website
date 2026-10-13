@@ -1,0 +1,45 @@
+---
+import Base from './Base.astro';
+import TopBar from '../components/TopBar.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { ui, withLang, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+  title: string;
+  description?: string;
+}
+
+const { lang = 'en', title, description } = Astro.props;
+const t = ui[lang];
+const path = (to: string) => withLang(lang, to);
+
+const footerLinks = [
+  { href: path('/imprint/'), label: t.imprint },
+  { href: path('/privacy/'), label: t.privacy },
+  { href: path('/'), label: t.home },
+];
+---
+
+<Base lang={lang} title={`${title} | CSGE`} description={description}>
+  <TopBar lang={lang} action={{ href: path('/consultation/'), label: t.bookConsultation }} />
+  <Header lang={lang} homeHref={path('/')} nav={[]} cta={{ href: path('/#apply'), label: t.apply }} />
+  <main class="container section legal">
+    <h1 class="h2">{title}</h1>
+    <slot />
+  </main>
+  <Footer lang={lang} links={footerLinks} compact />
+</Base>
+
+<style>
+  .legal {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--grey);
+  }
+</style>

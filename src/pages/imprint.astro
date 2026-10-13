@@ -1,0 +1,8 @@
+---
+import Legal from '../layouts/Legal.astro';
+import { legal, pages } from '../i18n';
+---
+
+<Legal lang="en" title={pages.en.imprint.title} description={pages.en.imprint.description}>
+  <p>{legal.en.imprintBody}</p>
+</Legal>

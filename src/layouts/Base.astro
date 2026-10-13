@@ -1,0 +1,96 @@
+---
+import '@fontsource/poppins/500.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+import '@fontsource/poppins/800.css';
+import '@fontsource/dm-sans/400.css';
+import '@fontsource/dm-sans/500.css';
+import '@fontsource/dm-sans/700.css';
+import '../styles/global.css';
+import { absoluteUrl, site } from '../config';
+import { langHref, locales, ogLocales, stripLang, ui, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+  title: string;
+  description?: string;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { lang = 'en', title, description = site.description, jsonLd } = Astro.props;
+const t = ui[lang];
+const path = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const canonical = site.url ? absoluteUrl(path) : undefined;
+const graphs = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+const enPath = langHref('en', path);
+const zhPath = langHref('zh', path);
+const bare = stripLang(path);
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'EducationalOrganization',
+  name: site.company,
+  alternateName: ['CSGE', 'Center of Sino-German Education', '中德教育与人才流动中心'],
+  description: site.description,
+  url: canonical ? absoluteUrl(bare) : undefined,
+  inLanguage: [locales.en, locales.zh],
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Potsdam',
+    addressCountry: 'DE',
+  },
+  areaServed: ['CN', 'DE', 'EU'],
+};
+---
+
+<!doctype html>
+<html lang={locales[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.company} />
+    <meta name="theme-color" content="#4E3188" />
+    {
+      site.noindex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta name="robots" content="index, follow" />
+      )
+    }
+    {canonical && <link rel="canonical" href={canonical} />}
+    {site.url && <link rel="alternate" hreflang="en" href={absoluteUrl(enPath)} />}
+    {site.url && <link rel="alternate" hreflang="zh-CN" href={absoluteUrl(zhPath)} />}
+    {site.url && <link rel="alternate" hreflang="x-default" href={absoluteUrl(enPath)} />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.shortName} />
+    <meta property="og:locale" content={ogLocales[lang]} />
+    <meta property="og:locale:alternate" content={lang === 'zh' ? ogLocales.en : ogLocales.zh} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <script type="application/ld+json" set:html={JSON.stringify(organization)} />
+    {graphs.map((graph) => <script type="application/ld+json" set:html={JSON.stringify(graph)} />)}
+  </head>
+  <body>
+    <div class="scroll-progress" aria-hidden="true"></div>
+    <slot />
+    <button type="button" class="to-top" aria-label={t.backToTop}>
+      <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    </button>
+    <script>
+      import '../scripts/interactions';
+    </script>
+  </body>
+</html>

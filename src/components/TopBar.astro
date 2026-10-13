@@ -1,0 +1,80 @@
+---
+import { href, links } from '../config';
+import { langHref, ui, type Lang } from '../i18n';
+
+interface Props {
+  lang?: Lang;
+  action: { href: string; label: string };
+}
+
+const { action, lang = 'en' } = Astro.props;
+const t = ui[lang];
+const here = Astro.url.pathname;
+---
+
+<div class="topbar">
+  <div class="container topbar__inner">
+    <div class="topbar__lang" role="group" aria-label={t.language}>
+      <a href={langHref('en', here)} hreflang="en" class:list={{ 'is-current': lang === 'en' }} aria-current={lang === 'en' ? 'true' : undefined}>
+        {t.en}
+      </a>
+      <a href={langHref('zh', here)} hreflang="zh-CN" lang="zh" class:list={{ 'is-current': lang === 'zh' }} aria-current={lang === 'zh' ? 'true' : undefined}>
+        {t.zh}
+      </a>
+    </div>
+    <div class="topbar__links">
+      <a href={href(links.brochure)}>{t.brochure}</a>
+      <span class="topbar__sep" aria-hidden="true"></span>
+      <a href={action.href}>{action.label}</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .topbar {
+    background: var(--violet-deep);
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.01em;
+  }
+  .topbar__inner {
+    min-height: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px 16px;
+  }
+  .topbar__lang,
+  .topbar__links {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .topbar__lang {
+    gap: 4px;
+  }
+  .topbar__lang > * {
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .topbar__lang a.is-current {
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    pointer-events: none;
+  }
+  .topbar__sep {
+    width: 1px;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+  .topbar a {
+    color: rgba(255, 255, 255, 0.82);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .topbar a:hover {
+    color: #fff;
+  }
+</style>
