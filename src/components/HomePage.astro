@@ -468,8 +468,8 @@ const footerLinks = [
     </section>
 
     <section id="contact" aria-labelledby="contact-h" class="bg-deep">
-      <div class="container section split" style="align-items:flex-start">
-        <div class="stack" style="--gap:32px">
+      <div class="container section contact">
+        <div class="stack contact__main" style="--gap:32px">
           <SectionHead eyebrow={t.contact.eyebrow} id="contact-h" dark>{t.contact.title}</SectionHead>
           <address class="contact__details" data-reveal>
             <div><span>{t.contact.address}</span>{t.contact.addressValue}</div>
@@ -478,7 +478,7 @@ const footerLinks = [
             <div><span>{t.contact.wechat}</span>{t.contact.wechatId}</div>
           </address>
         </div>
-        <div class="stack contact__aside" style="--gap:24px" data-reveal>
+        <div class="contact__aside" data-reveal>
           <div class="contact__wechat">
             <div class="contact__qr">{t.contact.qr}</div>
             <p>{t.contact.scan}</p>
@@ -1299,33 +1299,62 @@ const footerLinks = [
     font-weight: 700;
     color: #fff;
   }
-  .contact__wechat {
-    display: flex;
-    gap: 20px;
+  .contact {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+    gap: clamp(40px, 6vw, 80px);
     align-items: center;
   }
+  .contact__main {
+    min-width: 0;
+  }
+  .contact__aside {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 28px;
+    margin-inline: auto;
+    width: min(100%, 320px);
+  }
+  .contact__wechat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
   .contact__wechat p {
+    margin: 0;
     font-size: 15px;
     line-height: 1.6;
     color: var(--lilac);
-    max-width: 240px;
+    max-width: 28ch;
   }
   .contact__qr {
-    flex: 0 0 112px;
-    width: 112px;
-    height: 112px;
+    width: 148px;
+    height: 148px;
     background: #fff;
     color: var(--violet);
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
-    font-size: 13px;
-    padding: 8px;
-    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.35;
+    padding: 16px;
+    border-radius: 16px;
   }
-  .contact__aside {
-    --basis: 360px;
-    padding-top: 8px;
+  .contact__aside :global(.btn) {
+    width: 100%;
+  }
+  @media (max-width: 800px) {
+    .contact {
+      grid-template-columns: 1fr;
+      justify-items: center;
+    }
+    .contact__main {
+      width: 100%;
+    }
   }
 </style>
