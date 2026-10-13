@@ -10,12 +10,34 @@ export const ogLocales: Record<Lang, string> = {
   zh: 'zh_CN',
 };
 
+function siteBase() {
+  const base = import.meta.env.BASE_URL || '/';
+  return base.endsWith('/') ? base.slice(0, -1) : base;
+}
+
+function withoutBase(pathname: string) {
+  const base = siteBase();
+  if (!base) return pathname || '/';
+  if (pathname === base || pathname === `${base}/`) return '/';
+  if (pathname.startsWith(`${base}/`)) return pathname.slice(base.length) || '/';
+  return pathname || '/';
+}
+
+function withBase(path: string) {
+  const base = siteBase();
+  if (!base || !path.startsWith('/')) return path;
+  if (path === base || path.startsWith(`${base}/`)) return path;
+  return `${base}${path}`;
+}
+
 export function isZhPath(pathname: string) {
-  return pathname === '/zh' || pathname === '/zh/' || pathname.startsWith('/zh/');
+  const path = withoutBase(pathname);
+  return path === '/zh' || path === '/zh/' || path.startsWith('/zh/');
 }
 
 export function stripLang(pathname: string) {
-  const raw = pathname.endsWith('/') || pathname === '/' ? pathname : `${pathname}/`;
+  const stripped = withoutBase(pathname);
+  const raw = stripped.endsWith('/') || stripped === '/' ? stripped : `${stripped}/`;
   if (raw === '/zh/') return '/';
   if (raw.startsWith('/zh/')) return raw.slice(3);
   return raw;
@@ -28,9 +50,9 @@ export function withLang(lang: Lang, path: string) {
   const hash = hashIndex >= 0 ? path.slice(hashIndex) : '';
   const raw = hashIndex >= 0 ? path.slice(0, hashIndex) : path;
   const page = (raw.startsWith('/') ? raw : `/${raw}`) || '/';
-  if (lang === 'en') return `${page}${hash}`;
-  if (page === '/') return `/zh/${hash}`;
-  return `/zh${page}${hash}`;
+  if (lang === 'en') return withBase(`${page}${hash}`);
+  if (page === '/') return withBase(`/zh/${hash}`);
+  return withBase(`/zh${page}${hash}`);
 }
 
 export function langHref(lang: Lang, pathname: string) {
