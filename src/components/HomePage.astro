@@ -79,7 +79,8 @@ const footerLinks = [
       </div>
     </section>
 
-    <section aria-label={lang === 'zh' ? '亮点' : 'Highlights'} class="bg-warm">
+    <section aria-labelledby="highlights-h" class="bg-warm">
+      <h2 id="highlights-h" class="sr-only">{lang === 'zh' ? '亮点' : 'Highlights'}</h2>
       <div class="container highlights grid" style="--min:250px;--gap:32px" data-reveal-stagger="55">
         {
           t.highlights.map((h) => (

@@ -5,8 +5,7 @@ export const site = {
     'Study 100% online from China with German UDS. Earn European ECTS credits, get visa support and open a path to study and work in Europe.',
   company: 'Center of Sino-German Education and Talent Mobility GmbH',
   locale: 'en',
-  // Set this to the public origin before launch, e.g. 'https://www.csge.de'
-  url: '',
+  url: 'https://www.sino-german-edcenter.de',
   // Keep search engines out until legal pages and remaining placeholders are final.
   noindex: true,
 };

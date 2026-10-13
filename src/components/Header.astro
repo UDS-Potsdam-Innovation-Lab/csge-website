@@ -22,12 +22,13 @@ const t = ui[lang];
 
 <header class:list={['header', { 'header--sticky': sticky }]} data-header>
   <div class="container header__inner">
-    <a href={homeHref} aria-label={t.homeAria} class="brand">
+    <a href={homeHref} class="brand">
       <Logo width={42} height={36} />
       <span class="brand__text">
         <span class="brand__name">CSGE</span>
         <span class="brand__sub">{t.brandSub}</span>
       </span>
+      <span class="sr-only">{t.homeAria}</span>
     </a>
 
     {
