@@ -3,7 +3,6 @@ import Base from '../layouts/Base.astro';
 import TopBar from './TopBar.astro';
 import Header from './Header.astro';
 import Footer from './Footer.astro';
-import Placeholder from './Placeholder.astro';
 import CornerFrame from './CornerFrame.astro';
 import HeroPass from './HeroPass.astro';
 import SectionHead from './SectionHead.astro';
@@ -60,9 +59,11 @@ const footerLinks = [
         <div class="hero__par" data-parallax="0.05" style="--basis:480px">
           <div class="stack hero__copy intro" style="--gap:24px">
             <div class="eyebrow eyebrow--amber hero__eyebrow">{t.hero.eyebrow}</div>
-            <h1 class="h1">{t.hero.title}</h1>
+            <h1 class="h1">
+              {t.hero.title}<br /><span class="hero__accent">{t.hero.titleAccent}</span>
+            </h1>
             <p class="hero__lead">
-              <b>{t.hero.welcome}</b> {t.hero.lead}
+              <b>{t.hero.goal}</b> <span class="hero__accent">{t.hero.pathway}</span>
             </p>
             <div class="hero__actions">
               <a href="#apply" class="btn btn--lg btn--amber" data-magnetic>{t.hero.apply}</a>
@@ -79,24 +80,28 @@ const footerLinks = [
       </div>
     </section>
 
-    <section aria-labelledby="highlights-h" class="bg-warm">
-      <h2 id="highlights-h" class="sr-only">{lang === 'zh' ? '亮点' : 'Highlights'}</h2>
-      <div class="container highlights grid" style="--min:250px;--gap:32px" data-reveal-stagger="55">
-        {
-          t.highlights.map((h) => (
-            <div class="stack highlight" style="--gap:16px">
-              <div class="highlight__media">
-                {'badge' in h && h.badge ? (
-                  <div class="highlights__badge">{h.badge}</div>
-                ) : (
-                  <Placeholder label={h.placeholder!} />
-                )}
-              </div>
-              <h3 class="card-title">{h.title}</h3>
-              <p class="text">{h.text}</p>
-            </div>
-          ))
-        }
+    <section id="how" aria-labelledby="how-h">
+      <div class="container section stack" style="--gap:40px">
+        <SectionHead eyebrow={t.how.eyebrow} id="how-h" width={760} lead={t.how.lead}>{t.how.title}</SectionHead>
+        <div class="grid how" style="--min:240px;--gap:24px" data-reveal-stagger="70">
+          {
+            t.how.steps.map((step, i) => (
+              <a
+                class="how__card"
+                href={step.href}
+                target={'external' in step && step.external ? '_blank' : undefined}
+                rel={'external' in step && step.external ? 'noopener' : undefined}
+              >
+                <img src={step.image} alt={step.alt} width="800" height="520" loading="lazy" decoding="async" />
+                <h3 class="how__title">
+                  <span class:list={['how__num', { 'how__num--amber': 'amber' in step && step.amber }]} aria-hidden="true">{i + 1}</span>
+                  {step.title}
+                </h3>
+                <span class="how__cta">{step.cta} <span aria-hidden="true">→</span></span>
+              </a>
+            ))
+          }
+        </div>
       </div>
     </section>
 
@@ -104,32 +109,71 @@ const footerLinks = [
       <div class="container section split">
         <div class="about__visual" data-reveal>
           <CornerFrame>
-            <Placeholder label={t.about.photo} height={420} style="border-radius:var(--r-panel)" />
+            <div class="about__media">
+              <video
+                src={t.about.video}
+                poster={t.about.poster}
+                controls
+                playsinline
+                preload="metadata"
+                aria-label={t.about.videoLabel}
+              ></video>
+              <p class="about__caption">{t.about.caption}</p>
+            </div>
           </CornerFrame>
         </div>
-        <div class="stack about__copy" style="--gap:24px;--basis:480px">
+        <div class="stack about__copy" style="--gap:18px;--basis:480px">
           <SectionHead eyebrow={t.about.eyebrow} id="about-h">{t.about.title}</SectionHead>
-          <div class="stack" style="--gap:16px" data-reveal>
-            <p class="text-lg">{t.about.p1}</p>
-            <p class="text-lg">{t.about.p2}</p>
-            <div class="chips about__chips">
-              {t.about.chips.map((c) => <span class="chip about__chip">{c}</span>)}
-              <span class="chip about__chip about__chip--solid">{t.about.valuesChip}</span>
+          <ul class="about__points">
+            {
+              t.about.points.map((point) => (
+                <li>
+                  <span class="about__check" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24">
+                      <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+                    </svg>
+                  </span>
+                  <span>
+                    <strong>{point.title}</strong>
+                    <span>{point.text}</span>
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="about__roles">
+            <div class="about__role">
+              <img src="/images/logo-uds.png" alt="" width="30" height="30" />
+              <span><b>{t.about.udsName}</b> {t.about.uds}</span>
+            </div>
+            <div class="about__role">
+              <img src="/images/logo-csge.png" alt="" width="40" height="40" />
+              <span><b>{t.about.csgeName}</b> {t.about.csge}</span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section id="potsdam" aria-labelledby="potsdam-h" class="bg-teal">
+    <section id="potsdam" aria-labelledby="potsdam-h">
       <div class="container section stack" style="--gap:56px">
         <SectionHead eyebrow={t.potsdam.eyebrow} id="potsdam-h">{t.potsdam.title}</SectionHead>
-        <div class="grid" style="--min:300px;--gap:32px" data-reveal-stagger="100">
+        <div class="grid" style="--min:300px;--gap:24px" data-reveal-stagger="100">
           {
             t.potsdam.items.map((item) => (
-              <div class="stack experience" style="--gap:16px">
+              <div class="stack experience" style="--gap:14px">
                 <div class="experience__media">
-                  <Placeholder label={item.placeholder} />
+                  {'video' in item && item.video ? (
+                    <video src={item.video} poster={item.poster} controls playsinline preload="metadata" aria-label={item.alt}></video>
+                  ) : (
+                    <img
+                      src={item.image}
+                      alt={item.alt}
+                      style={'position' in item && item.position ? `object-position:${item.position}` : undefined}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
                 </div>
                 <h3 class="card-title">{item.title}</h3>
                 <p class="text">{item.text}</p>
@@ -152,6 +196,14 @@ const footerLinks = [
         <SectionHead eyebrow={t.future.eyebrow} id="future-h" width={900} lead={t.future.lead}>
           {t.future.titleBefore}<br /><span style="color:var(--violet)">{t.future.titleAccent}</span>
         </SectionHead>
+        <div class="future-photo" data-reveal>
+          <CornerFrame color="var(--amber)" padding={14} size={64} thickness={8}>
+            <div class="future-photo__frame">
+              <img src={t.future.photo} alt={t.future.photoAlt} width="2000" height="1330" loading="lazy" decoding="async" />
+              <span class="media-tag"><span class="media-tag__mark" aria-hidden="true"></span>{t.future.photoCaption}</span>
+            </div>
+          </CornerFrame>
+        </div>
         <div class="values" data-reveal-stagger="100">
           {
             t.future.values.map((v) => (
@@ -202,54 +254,49 @@ const footerLinks = [
         </SectionHead>
 
         <div class="stack" style="--gap:32px">
-          <div class="panel" data-track-scope data-reveal>
-            <div class="row-between">
-              <div class="stack" style="--gap:10px;max-width:680px">
+          <div class="panel" data-reveal>
+            <div class="ed4">
+              <div class="stack ed4__copy" style="--gap:12px">
                 <div class="kicker">{t.programs.microKicker}</div>
                 <h3 class="program-title program-title--xl">Ed4Change</h3>
                 <p class="text" style="font-size:16px">{t.programs.ed4changeLead}</p>
+                <p class="ed4__online">{t.programs.online}</p>
+                <a href="#apply" class="btn btn--primary" data-magnetic>{t.programs.applyEd4}</a>
               </div>
-              <a href="#apply" class="btn btn--primary" data-magnetic>{t.programs.applyEd4}</a>
-            </div>
-
-            <div class="finder" data-track-finder>
-              <span class="finder__label" id="finder-label">{t.programs.finderLabel}</span>
-              <div class="finder__options" role="group" aria-labelledby="finder-label">
-                {
-                  t.programs.trackFinder.map((o) => (
-                    <button type="button" class="finder__option" data-track={o.track} aria-pressed="false">
-                      {o.label}
-                    </button>
-                  ))
-                }
-              </div>
+              <figure class="ed4__media">
+                <img src={t.programs.platformImage} alt={t.programs.platformAlt} width="1600" height="1067" loading="lazy" decoding="async" />
+                <span class="media-tag"><span class="media-tag__mark" aria-hidden="true"></span>{t.programs.platformCaption}</span>
+              </figure>
             </div>
 
             <div class="grid tracks" style="--min:230px;--gap:16px">
               {
-                t.programs.ed4change.map((track) => (
-                  <div class="card track" data-tilt data-track-card={track.name}>
-                    <div class="track__name">{track.name}</div>
-                    <div class="kicker track__audience">{track.audience}</div>
-                    <p class="text">{track.text}</p>
-                    <div class="track__foot">
-                      <span class="track__price">{track.price}</span>
-                      {track.priceNote && <span class="track__note">{track.priceNote}</span>}
+                t.programs.ed4change.map((track) =>
+                  'soon' in track && track.soon ? (
+                    <div class="card track track--soon" data-tilt data-track-card={track.name}>
+                      <div class="track__head">
+                        <div class="track__name">{track.name}</div>
+                        <span class="badge-soon">{t.programs.comingSoon}</span>
+                      </div>
+                      <div class="kicker track__audience">{track.audience}</div>
+                      <p class="text">{track.text}</p>
+                      <a href={path('/consultation/')} class="track__foot track__link">
+                        {t.programs.registerInterest} <span class="arrow" aria-hidden="true">→</span>
+                      </a>
                     </div>
-                  </div>
-                ))
+                  ) : (
+                    <div class="card track" data-tilt data-track-card={track.name}>
+                      <div class="track__name">{track.name}</div>
+                      <div class="kicker track__audience">{track.audience}</div>
+                      <p class="text">{track.text}</p>
+                      <div class="track__foot">
+                        <span class="track__price">{track.price}</span>
+                        {'priceNote' in track && track.priceNote && <span class="track__note">{track.priceNote}</span>}
+                      </div>
+                    </div>
+                  ),
+                )
               }
-              <div class="card track track--soon" data-tilt data-track-card="i4research">
-                <div class="track__head">
-                  <div class="track__name">i4research</div>
-                  <span class="badge-soon">{t.programs.comingSoon}</span>
-                </div>
-                <div class="kicker track__audience">{t.programs.i4researchAudience}</div>
-                <p class="text">{t.programs.i4researchText}</p>
-                <a href={path('/consultation/')} class="track__foot track__link">
-                  {t.programs.registerInterest} <span class="arrow" aria-hidden="true">→</span>
-                </a>
-              </div>
             </div>
           </div>
 
@@ -378,7 +425,9 @@ const footerLinks = [
             {
               t.board.learningSupport.map((s) => (
                 <div class="card" data-tilt>
-                  <div class="support__logo">[{s.logo}]</div>
+                  <div class="support__logo">
+                    <img src={s.logo} alt={s.logoAlt} width="40" height="40" />
+                  </div>
                   <div class="kicker" style="font-size:12px">{t.board.supportLabel}</div>
                   <div class="support__name">{s.name}</div>
                   <p class="text" style="font-size:14px">{s.text}</p>
@@ -513,13 +562,23 @@ const footerLinks = [
   .hero__eyebrow {
     font-size: 18px;
   }
+  .hero .h1 {
+    line-height: 1.05;
+  }
+  .hero__accent {
+    color: var(--amber);
+  }
   .hero__lead {
-    font-size: clamp(17px, 1.8vw, 19px);
-    line-height: 1.65;
-    max-width: 540px;
-    color: var(--on-violet);
+    margin: 0;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: clamp(22px, 2.6vw, 28px);
+    line-height: 1.25;
+    max-width: 640px;
+    color: #fff;
   }
   .hero__lead b {
+    font-weight: 700;
     color: #fff;
   }
   .hero__actions {
@@ -534,55 +593,61 @@ const footerLinks = [
     margin-inline: auto;
   }
 
-  .highlights {
-    padding-block: clamp(72px, 8vw, 104px);
-    overflow: visible;
-  }
-  .highlight {
-    overflow: visible;
+  .how__card {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
     min-width: 0;
+    color: var(--ink);
+    text-decoration: none;
   }
-  .highlight__media {
+  .how__card:hover {
+    color: var(--ink);
+  }
+  .how__card img {
+    display: block;
+    width: 100%;
+    height: 260px;
     border-radius: 16px;
-    overflow: hidden;
-    isolation: isolate;
-    background: linear-gradient(135deg, var(--lilac) 0%, #ebe5f6 100%);
+    object-fit: cover;
     transition: transform 0.35s var(--ease-out);
   }
-  .highlight:hover .highlight__media {
+  .how__card:hover img {
     transform: translateY(-4px);
   }
-  .highlight__media :global(.placeholder) {
-    border-radius: 0;
-    overflow: visible;
-    padding: 24px;
-    font-size: 15px;
-    line-height: 1.45;
-  }
-  .highlights__badge {
-    height: var(--h, 260px);
+  .how__title {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 12px;
+    font-size: 22px;
+  }
+  .how__num {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    border-radius: 50%;
     background: var(--violet);
     color: #fff;
-    font-family: var(--font-head);
-    font-weight: 800;
-    font-size: clamp(36px, 4.8vw, 52px);
-    letter-spacing: 0.06em;
-    line-height: 1;
-    padding: 24px;
-    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .how__num--amber {
+    background: var(--amber);
+    color: var(--ink);
+  }
+  .how__cta {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--violet);
   }
   .card-title {
-    font-size: 20px;
+    font-size: 22px;
     line-height: 1.35;
     overflow: visible;
     padding-inline: 1px;
-  }
-  .highlight .text {
-    overflow: visible;
-    line-height: 1.65;
   }
 
   .about__visual,
@@ -590,46 +655,175 @@ const footerLinks = [
     overflow: visible;
     min-width: 0;
   }
-  .about__visual :global(.placeholder) {
-    overflow: visible;
-    padding: 28px;
-    font-size: 16px;
-    line-height: 1.45;
-  }
-  .about__chips {
+  .about__media {
+    display: flex;
+    flex-direction: column;
     gap: 10px;
-    padding-top: 8px;
-    overflow: visible;
   }
-  .about__chip {
-    background: #fff;
-    border: 1.5px solid #b9aed3;
-    padding: 8px 16px;
-    font-size: 14px;
-    line-height: 1.3;
-    overflow: visible;
+  .about__media video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--r-panel);
+    background: var(--ink);
+    object-fit: cover;
   }
-  .about__chip--solid {
+  .about__caption {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--violet);
+  }
+  .about__points {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .about__points li {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .about__points strong {
+    display: block;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--ink);
+  }
+  .about__points li span span {
+    display: block;
+    font-size: 17px;
+    color: var(--grey);
+  }
+  .about__check {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    border-radius: 50%;
     background: var(--violet);
-    border-color: var(--violet);
-    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .about__roles {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 4px;
+  }
+  .about__role {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--grey);
+  }
+  .about__role b {
+    font-family: var(--font-head);
+    color: var(--ink);
+  }
+  .about__role img {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    object-fit: contain;
+    border-radius: 8px;
   }
 
   .experience__media {
     border-radius: 16px;
     overflow: hidden;
     isolation: isolate;
+    background: var(--ink);
     transition: transform 0.35s var(--ease-out);
   }
   .experience:hover .experience__media {
     transform: translateY(-4px);
   }
-  .experience__media :global(.placeholder) {
-    border-radius: 0;
-    overflow: visible;
-    padding: 24px;
+  .experience__media img,
+  .experience__media video {
+    display: block;
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+  }
+
+  .future-photo__frame {
+    position: relative;
+    height: clamp(280px, 38vw, 460px);
+    border-radius: var(--r-panel);
+    overflow: hidden;
+  }
+  .future-photo__frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+  }
+  .media-tag {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: calc(100% - 40px);
+    background: rgba(27, 21, 48, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--r-pill);
+    padding: 8px 14px;
+    color: #fff;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .media-tag__mark {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border-top: 2.5px solid var(--teal);
+    border-right: 2.5px solid var(--teal);
+  }
+  .ed4 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    align-items: center;
+  }
+  .ed4__copy {
+    flex: 1 1 380px;
+    min-width: 0;
+    align-items: flex-start;
+  }
+  .ed4__online {
+    margin: 0;
     font-size: 15px;
-    line-height: 1.45;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .ed4__media {
+    position: relative;
+    flex: 1 1 420px;
+    min-width: 0;
+    margin: 0;
+    aspect-ratio: 1600 / 1067;
+    border-radius: var(--r-card);
+    overflow: hidden;
+  }
+  .ed4__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .event {
     background: var(--mist-2);
@@ -983,6 +1177,7 @@ const footerLinks = [
     padding: 4px;
     background: #fff;
     box-shadow: 0 0 0 1px var(--line);
+    overflow: hidden;
     transition: box-shadow 0.3s;
   }
   .member:hover .member__photo {
@@ -1047,9 +1242,12 @@ const footerLinks = [
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    font-size: 11px;
-    color: var(--violet);
+  }
+  .support__logo img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 8px;
   }
   .support__name {
     font-family: var(--font-head);
