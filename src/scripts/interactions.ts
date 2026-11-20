@@ -297,6 +297,14 @@ function initLeadForm() {
   });
 }
 
+function initAmbientVideo() {
+  if (!reduceMotion) return;
+  document.querySelectorAll<HTMLVideoElement>('video[data-ambient]').forEach((video) => {
+    video.removeAttribute('autoplay');
+    video.pause();
+  });
+}
+
 function initMagnetic() {
   if (reduceMotion || !finePointer) return;
   document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach((el) => {
@@ -346,5 +354,6 @@ initScrollSpy();
 initAccordions();
 initTrackFinder();
 initLeadForm();
+initAmbientVideo();
 initMagnetic();
 initTilt();

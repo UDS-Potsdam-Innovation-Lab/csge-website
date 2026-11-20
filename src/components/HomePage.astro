@@ -435,32 +435,26 @@ const footerLinks = [
               ))
             }
           </div>
-          <div class="stack" style="--gap:16px">
-            <h4 class="support__sub">{t.board.advisorsTitle}</h4>
-            <div class="grid" style="--min:260px;--gap:16px">
-              {
-                t.board.advisors.map((a) => (
-                  <div class="card advisor" data-tilt>
-                    <div class="advisor__photo">{t.board.photo}</div>
-                    <div class="stack" style="--gap:4px;min-width:0">
-                      <div class="advisor__name">{a.name}</div>
-                      <div class="advisor__role">{a.role}</div>
-                      <div class="advisor__focus">{a.focus}</div>
-                    </div>
-                  </div>
-                ))
-              }
-            </div>
-          </div>
         </div>
       </div>
     </section>
 
-    <section id="partners" aria-labelledby="partners-h" class="bg-sand">
+    <section id="partners" aria-labelledby="partners-h">
       <div class="container section stack" style="--gap:48px">
         <SectionHead eyebrow={t.partners.eyebrow} id="partners-h">{t.partners.title}</SectionHead>
-        <div class="grid" style="--min:220px;--gap:16px" data-reveal-stagger="80">
-          {t.partners.items.map((item) => <div class="partner" data-tilt>{item}</div>)}
+        <div class="grid" style="--min:340px;--gap:16px" data-reveal-stagger="80">
+          {
+            t.partners.items.map((item) => (
+              <a class="partner" href={item.href} target="_blank" rel="noopener" data-tilt>
+                <img src={item.logo} alt={item.logoAlt} width="84" height="84" />
+                <span class="partner__body">
+                  <span class="kicker">{item.kicker}</span>
+                  <span class="partner__name">{item.name}</span>
+                  <span class="partner__local">{item.localName}</span>
+                </span>
+              </a>
+            ))
+          }
         </div>
         <div class="partners__cta" data-reveal>
           <p class="text-lg">{t.partners.cta}</p>
@@ -524,15 +518,32 @@ const footerLinks = [
           <address class="contact__details" data-reveal>
             <div><span>{t.contact.address}</span>{t.contact.addressValue}</div>
             <div><span>{t.contact.email}</span>[info@your-domain]</div>
-            <div><span>{t.contact.phone}</span>[+49 …]</div>
             <div><span>{t.contact.wechat}</span>{t.contact.wechatId}</div>
           </address>
         </div>
         <div class="contact__aside" data-reveal>
-          <div class="contact__wechat">
-            <div class="contact__qr">{t.contact.qr}</div>
-            <p>{t.contact.scan}</p>
-          </div>
+          <CornerFrame color="var(--amber)" padding={12} size={56} thickness={7} class="contact__frame">
+            <div class="contact__video">
+              <video
+                src={t.contact.video}
+                poster={t.contact.poster}
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="metadata"
+                data-ambient
+                aria-label={t.contact.videoLabel}
+              ></video>
+              <span class="media-tag">
+                <span class="media-tag__mark" aria-hidden="true"></span>
+                {t.contact.videoCaption}
+              </span>
+            </div>
+          </CornerFrame>
+          <a class="contact__map" href={t.contact.mapHref} target="_blank" rel="noopener">
+            {t.contact.map} <span aria-hidden="true">→</span>
+          </a>
           <a href={path('/consultation/')} class="btn btn--lg btn--amber" data-magnetic>{t.contact.book}</a>
         </div>
       </div>
@@ -1255,55 +1266,44 @@ const footerLinks = [
     font-size: 19px;
     line-height: 1.25;
   }
-  .support__sub {
-    font-weight: 700;
-    font-size: 18px;
-  }
-  .advisor {
-    padding: 20px;
-    flex-direction: row;
-    align-items: center;
-    gap: 16px;
-  }
-  .advisor__photo {
-    flex: 0 0 60px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--lilac);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    color: var(--violet);
-  }
-  .advisor__name {
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: 17px;
-  }
-  .advisor__role {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--violet);
-  }
-  .advisor__focus {
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--grey-2);
-  }
 
   .partner {
-    height: 140px;
+    min-height: 140px;
     background: #fff;
     border: 1px solid var(--line);
     border-radius: var(--r-card);
     display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 16px;
-    font-weight: 700;
+    gap: 20px;
+    text-align: left;
+    padding: 20px 22px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .partner:hover {
+    color: var(--ink);
+    border-color: var(--violet);
+  }
+  .partner img {
+    width: 84px;
+    height: 84px;
+    flex: 0 0 84px;
+    object-fit: contain;
+  }
+  .partner__body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .partner__name {
+    font-family: var(--font-head);
+    font-weight: 800;
+    font-size: 19px;
+    line-height: 1.25;
+  }
+  .partner__local {
+    font-size: 15px;
     color: var(--grey);
   }
   .partners__cta {
@@ -1510,49 +1510,42 @@ const footerLinks = [
   .contact__aside {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    text-align: center;
-    gap: 28px;
-    margin-inline: auto;
-    width: min(100%, 320px);
-  }
-  .contact__wechat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-  }
-  .contact__wechat p {
-    margin: 0;
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--lilac);
-    max-width: 28ch;
-  }
-  .contact__qr {
-    width: 148px;
-    height: 148px;
-    background: #fff;
-    color: var(--violet);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 14px;
-    line-height: 1.35;
-    padding: 16px;
-    border-radius: 16px;
-  }
-  .contact__aside :global(.btn) {
+    gap: 18px;
     width: 100%;
+    min-width: 0;
+  }
+  .contact__frame {
+    width: 100%;
+  }
+  .contact__video {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--ink);
+  }
+  .contact__video video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .contact__map {
+    color: var(--lilac);
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .contact__map:hover {
+    color: var(--amber);
   }
   @media (max-width: 800px) {
     .contact {
       grid-template-columns: 1fr;
-      justify-items: center;
     }
-    .contact__main {
+    .contact__main,
+    .contact__aside {
       width: 100%;
     }
   }
